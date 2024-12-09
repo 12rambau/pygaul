@@ -193,4 +193,3 @@ If you make an error when writing the name of your input, the error message will
     ee.Initialize()
 
     fc = pygaul.Items(name="Franc")
-

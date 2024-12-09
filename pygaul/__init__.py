@@ -3,6 +3,7 @@ Easy access to administrative boundary defined by FAO GAUL 2015 from Python scri
 
 This lib provides access to FAO GAUL 2015 datasets from a Python script. it is the best boundary dataset available for GEE at this point. We provide access to The current version (2015) administrative areas till level 2.
 """
+
 import json
 import warnings
 from difflib import get_close_matches
@@ -14,7 +15,7 @@ from typing import List, Union
 import ee
 import numpy as np
 import pandas as pd
-from deprecated.sphinx import deprecated, versionadded
+from deprecated.sphinx import deprecated, versionadded  # type: ignore [import-untyped]
 
 __version__ = "0.3.4"
 __author__ = "Pierrick Rambaud"
@@ -72,9 +73,7 @@ class Names(pd.DataFrame):
 
             if not is_in.any().any():
                 # find the 5 closest names/id
-                columns = [
-                    df[column.format(i)].dropna().str.lower().values for i in range(3)
-                ]
+                columns = [df[column.format(i)].dropna().str.lower().values for i in range(3)]
                 ids = np.unique(np.concatenate(columns))
                 close_ids = get_close_matches(id.lower(), ids, n=5)
                 if is_name is True:
@@ -92,9 +91,7 @@ class Names(pd.DataFrame):
 
             # load the max_level available in the requested area
             sub_df = df[df[column.format(level)].str.fullmatch(id, case=False)]
-            max_level = next(
-                i for i in reversed(range(3)) if (sub_df[f"ADM{i}_NAME"] != "").any()
-            )
+            max_level = next(i for i in reversed(range(3)) if (sub_df[f"ADM{i}_NAME"] != "").any())
 
             # get the request level from user
             content_level, level = int(content_level), int(level)
@@ -212,9 +209,9 @@ class Items(ee.FeatureCollection):
         ids = [int(v) for v in df[f"ADM{content_level}_CODE"].to_list()]
 
         # read the accurate dataset
-        feature_collection = ee.FeatureCollection(
-            __gaul_asset__.format(content_level)
-        ).filter(ee.Filter.inList(f"ADM{content_level}_CODE", ids))
+        feature_collection = ee.FeatureCollection(__gaul_asset__.format(content_level)).filter(
+            ee.Filter.inList(f"ADM{content_level}_CODE", ids)
+        )
 
         return feature_collection
 
